@@ -1,30 +1,57 @@
 # ABC-Soup - an OCR API
 
-![CI](https://github.com/elbakerino/abc-soup/actions/workflows/blank.yml/badge.svg)
+[![Github actions Build](https://github.com/elbakerino/abc-soup/actions/workflows/blank.yml/badge.svg)](https://github.com/elbakerino/abc-soup/actions)
 
 Simple Tesseract 5 API in python, using [tessdata_best](https://github.com/tesseract-ocr/tessdata_best/) and dockerized setup.
 
 Endpoints:
 
 - `GET:/info` get tesseract version and available languages
-- `POST:/ocr` perform OCR on a single image, field name `file` for the file
-- `POST:/ocr-batch` perform OCR on multiple images, any field name for files (except `options`)
+- `POST:/ocr` perform OCR on a single image
+- `POST:/ocr-batch` perform OCR on multiple images
+- `POST:/ocr-to-pdf` perform OCR on a single image and create a searchable PDF
+
+> Upload the file in the field `file`, the batch endpoint uses all given files. See below [JS Client example](#js-client-example).
 
 Options for OCR endpoints:
 
 - `optimize_images: true` applies some binarization and contrast optimizations
-    - there are quite a few assumptions and todos for better results in [src/helpers/prepare_files.py](./src/helpers/prepare_files.py)
 - `save_intermediate: false` stores intermediate image processing files to `/app/shared-assets`
-- `intra_block_breaks: true` adds line breaks when text is below each other in a single block
-- `keep_details: false` when `true` returns data per page, block and box; when `false` only the combined content per page
+- `intra_block_breaks: true` adds line breaks when text is below each other in a single block (except PDF endpoint)
+- `keep_details: false` when `true` returns data per page, block and box; when `false` only the combined content per page (except PDF endpoint)
 - [tesseract](https://tesseract-ocr.github.io/tessdoc) options:
     - `lang` the languages used for inference, defaults to `eng+deu`
     - `psm` when not none passed as `--psm` to tesseract, [see docs](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#page-segmentation-method)
     - `preserve_interword_spaces` when not none passed as `-c preserve_interword_spaces=` to tesseract
 
-> send options as JSON in field name `options` (serialized additionally, as multipart upload)
+> Options: send options as JSON in field name `options` (serialized additionally, as multipart upload).
+>
+> Image optimizations: in [helpers/optimize_image.py](./src/helpers/optimize_image.py) are a few input-quality assumptions noted and (open) todos which may yield better results.
 
-For further options and mount points see [docker-compose.yml](docker-compose.yml).
+For further options and mount points checkout [the docker example](#docker-example).
+
+## Docker Example
+
+Ready to use docker image includes models `eng` and `deu`:
+
+```yaml
+# docker-compose.yml
+services:
+    abc-soup:
+        image: ghcr.io/elbakerino/abc-soup:0.0.2
+        environment:
+            PORT: 80
+            APP_ENV: local
+            #GUN_W: 2 # control gunicorn workers
+        volumes:
+            - ./shared-data:/app/shared-assets
+        ports:
+            - "8730:80"
+```
+
+Models must be saved in `/usr/share/tesseract-ocr/5/tessdata` - thus included in docker image itself, see [Dockerfile](./Dockerfile), for all available best-models see [github.com/tesseract-ocr/tessdata_best](https://github.com/tesseract-ocr/tessdata_best).
+
+> todo: find out how to configure the "init only" config values https://tesseract-ocr.github.io/tessdoc/tess3/ControlParams.html#useful-parameters especially for checking out `load_system_dawg`.
 
 ## JS Client Example
 
@@ -32,12 +59,16 @@ Example in Javascript with extra options:
 
 ```js
 const data = {
-    file: file, // the File object from e.g. input
-    options: JSON.stringify({keep_details: true}),
+    file: file, // the File object from e.g. input field
+    options: JSON.stringify({
+        keep_details: true,
+        lang: 'eng+deu',
+        psm: 4,
+    }),
 }
 const formData = new FormData()
-for(const file in data) {
-    formData.append(file, data[file])
+for(const prop in data) {
+    formData.append(prop, data[prop])
 }
 // send with e.g. `XMLHttpRequest`
 const xhr = new XMLHttpRequest()
@@ -56,31 +87,25 @@ xhr.addEventListener('readystatechange', () => {
 
 ## Dev Notes
 
+Clone repo and install deps:
+
 ```shell
 pip install -r requirements.txt
 ```
+
+Then startup with docker compose or go into the container:
 
 ```shell
 docker compose run --rm api bash
 ```
 
-```yaml
-# docker-compose.yml
-services:
-  abc-soup:
-    image: ghcr.io/elbakerino/abc-soup:main
-    environment:
-      PORT: 80
-      APP_ENV: local
-    volumes:
-      - ./shared-data:/app/shared-assets
-    ports:
-      - "8730:80"
+Notice that the image requires rebuilding when changing e.g. deps:
+
+```shell
+docker compose up --build
+# or:
+# docker compose build
 ```
-
-Models must be saved in `/usr/share/tesseract-ocr/5/tessdata` - thus included in docker image itself, see [Dockerfile](./Dockerfile), for all available best-models see [github.com/tesseract-ocr/tessdata_best](https://github.com/tesseract-ocr/tessdata_best).
-
-> todo: find out how to configure the "init only" config values https://tesseract-ocr.github.io/tessdoc/tess3/ControlParams.html#useful-parameters especially for checking out `load_system_dawg`.
 
 ## See also
 

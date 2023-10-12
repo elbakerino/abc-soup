@@ -3,6 +3,7 @@ FROM python:3.10-slim-bookworm AS builder
 ENV PYTHONUNBUFFERED 1
 ARG DEBIAN_FRONTEND=noninteractive
 
+# todo: refine with best practices for python prod images
 RUN pip install --upgrade pip
 
 RUN apt-get update && \
@@ -48,4 +49,6 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./src /app/src
 
-CMD cd src && python -m gunicorn -w 2 server:app
+ENV GUN_W 2
+
+CMD cd src && python -m gunicorn -w ${GUN_W} server:app
