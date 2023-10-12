@@ -1,0 +1,24 @@
+shared-assets
+
+## ...
+
+.env*
+!.env.example
+
+__pycache__
+
+.terraform
+
+.DS_Store
+
+# JetBrains IDE's
+.idea/
+*.iml
+*.iws
+
+# supervisord
+8
+supervirsord.log
+
+tmp
+build

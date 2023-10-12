@@ -1,0 +1,10 @@
+pillow==9.1.0
+smart-open>="6.4.0"
+mypy
+numpy
+pytest
+requests
+opencv-python
+flask>=2.0.3
+flask-cors>=3.0.9
+pytesseract>=0.2.6

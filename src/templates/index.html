@@ -1,0 +1,37 @@
+<!doctype HTML>
+<html lang="en">
+<head>
+    <title>ABC-Soup</title>
+    <link href="https://formanta.bemit.codes/styles/main-dark.css" rel="stylesheet" type="text/css"/>
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+</head>
+<body class="bg-body p2">
+<div class='flex items-center mxa mb4'>
+    <h1 class="h4 mb0 center ml2">
+        <span style="display: inline-flex; font-weight: lighter; align-items: center; color: #cacaca">ABC-Soup</span><br/>
+        <span style="display: inline-flex; align-items: center; color: #cacaca; font-size: 0.85em;"><em>OCR with tesseract</em></span>
+    </h1>
+</div>
+
+
+<ul style="width: 280px; text-align: left; margin: 0 auto;">
+    <li class="ob o-divider list-reset"></li>
+    {% for link in links %}
+    <li>
+        {% if "GET" in link.1 %}
+        <a href="{{ link.0 }}">
+            <code style="color: inherit">{{ link.2 }}</code> <code style="opacity: 0.65">{{ link.1 }}</code> <code style="display: block">{{ link.0 }}</code>
+        </a>
+        {% else %}
+        <code>{{ link.2 }}</code> <code style="opacity: 0.65">{{ link.1 }}</code> <code style="display: block">{{ link.0 }}</code>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<div class="my2 flex">
+    <code class="right-align p2 overflow-auto grow-1x" style="opacity: 0.5;">{{version}}</code>
+</div>
+</body>
+</html>
