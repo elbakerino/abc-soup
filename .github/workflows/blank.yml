@@ -18,6 +18,9 @@ on:
 jobs:
     publish_docker_api:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
         strategy:
             matrix:
                 node-version: [ 18.x ]
@@ -39,6 +42,29 @@ jobs:
                 id: git_ci_run
                 run: echo ::set-output name=git_ci_run::${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}
 
+            -   name: Docker Registry login
+                run: docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+
             -   name: Build image `api`
                 run: |
-                    docker image build -t abc-soup -f Dockerfile .
+                    docker image build -t ghcr.io/elbakerino/abc-soup -f Dockerfile .
+
+            -   name: Publish image `api` as `develop`
+                if: github.ref == 'refs/heads/develop'
+                run: |
+                    docker tag ghcr.io/elbakerino/abc-soup ghcr.io/elbakerino/abc-soup:develop
+                    docker push ghcr.io/elbakerino/abc-soup:develop
+            -   name: Publish image `api` as `main`
+                if: github.ref == 'refs/heads/main'
+                run: |
+                    docker tag ghcr.io/elbakerino/abc-soup ghcr.io/elbakerino/abc-soup:main
+                    docker push ghcr.io/elbakerino/abc-soup:main
+            -   name: Publish image `api` tagged & latest
+                if: startsWith(github.ref, 'refs/tags/')
+                env:
+                    RELEASE_VERSION: ${{ steps.short_ref.outputs.short_ref }}
+                run: |
+                    docker tag ghcr.io/elbakerino/abc-soup ghcr.io/elbakerino/abc-soup:$RELEASE_VERSION
+                    docker push ghcr.io/elbakerino/abc-soup:$RELEASE_VERSION
+                    docker tag ghcr.io/elbakerino/abc-soup ghcr.io/elbakerino/abc-soup:latest
+                    docker push ghcr.io/elbakerino/abc-soup:latest

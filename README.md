@@ -62,7 +62,7 @@ pip install -r requirements.txt
 docker compose run --rm api bash
 ```
 
-Models must be saved in `/usr/share/tesseract-ocr/5/tessdata` - thus included in docker image itself here, see [Dockerfile](./Dockerfile), for all available best-models see [github.com/tesseract-ocr/tessdata_best](https://github.com/tesseract-ocr/tessdata_best).
+Models must be saved in `/usr/share/tesseract-ocr/5/tessdata` - thus included in docker image itself, see [Dockerfile](./Dockerfile), for all available best-models see [github.com/tesseract-ocr/tessdata_best](https://github.com/tesseract-ocr/tessdata_best).
 
 > todo: find out how to configure the "init only" config values https://tesseract-ocr.github.io/tessdoc/tess3/ControlParams.html#useful-parameters especially for checking out `load_system_dawg`.
 
