@@ -5,6 +5,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+            target: dev
         #env_file:
         #    - ./api/.env
         stop_signal: SIGINT

@@ -1,4 +1,4 @@
-name: abc-suite CI
+name: CI
 
 env:
     DOCKER_BUILDKIT: 1

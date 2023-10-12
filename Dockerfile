@@ -8,14 +8,20 @@ RUN pip install --upgrade pip
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3-numpy python3-pandas \
-    libssl-dev curl
+    libssl-dev curl && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update &&  \
     apt-get install -y --no-install-recommends \
     tesseract-ocr \
     ffmpeg libsm6 libxext6 \
     libgl1 \
-    libglib2.0-0
+    libglib2.0-0 && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -28,6 +34,18 @@ RUN cd /usr/share/tesseract-ocr/5/tessdata && curl -O https://raw.githubusercont
 
 COPY requirements.txt requirements.txt
 
+FROM builder AS dev
+
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 
 CMD python -m flask --app src/server --debug run --host 0.0.0.0 --port ${PORT}
+
+FROM builder
+
+RUN pip install --no-cache-dir --upgrade gunicorn
+
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+COPY ./src /app/src
+
+CMD cd src && python -m gunicorn -w 2 server:app

@@ -1,5 +1,7 @@
 # ABC-Soup - an OCR API
 
+![CI](https://github.com/elbakerino/abc-soup/actions/workflows/blank.yml/badge.svg)
+
 Simple Tesseract 5 API in python, using [tessdata_best](https://github.com/tesseract-ocr/tessdata_best/) and dockerized setup.
 
 Endpoints:
@@ -60,6 +62,20 @@ pip install -r requirements.txt
 
 ```shell
 docker compose run --rm api bash
+```
+
+```yaml
+# docker-compose.yml
+services:
+  abc-soup:
+    image: ghcr.io/elbakerino/abc-soup:main
+    environment:
+      PORT: 80
+      APP_ENV: local
+    volumes:
+      - ./shared-data:/app/shared-assets
+    ports:
+      - "8730:80"
 ```
 
 Models must be saved in `/usr/share/tesseract-ocr/5/tessdata` - thus included in docker image itself, see [Dockerfile](./Dockerfile), for all available best-models see [github.com/tesseract-ocr/tessdata_best](https://github.com/tesseract-ocr/tessdata_best).
