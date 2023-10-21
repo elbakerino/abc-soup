@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
-from flask import Flask, render_template, url_for, request, make_response
+from flask import Flask, render_template, url_for, request, make_response, Response
 from flask_cors import CORS
 from pytesseract import pytesseract
 from werkzeug.datastructures import FileStorage
@@ -161,15 +161,13 @@ def route_ocr_to_pdf():
     infer_id = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
     pil_image = optimize_image(file, optimize_images, f'/app/shared-assets/pdf_{infer_id}_' if save_intermediate else None)
 
-    binary_pdf: str = pytesseract.image_to_pdf_or_hocr(
+    binary_pdf = pytesseract.image_to_pdf_or_hocr(
         pil_image, lang=lang,
         config=' '.join(config),
         extension='pdf',
     )
 
     filename = Path(file.filename).stem
-
-    response = make_response(binary_pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=%s.pdf' % filename
+    response = Response(binary_pdf, content_type='application/pdf')
+    response.headers['Content-Disposition'] = f'inline; filename="{filename}.pdf"'
     return response
