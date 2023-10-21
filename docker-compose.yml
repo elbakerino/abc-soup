@@ -6,8 +6,6 @@ services:
             context: .
             dockerfile: Dockerfile
             target: dev
-        #env_file:
-        #    - ./api/.env
         stop_signal: SIGINT
         environment:
             PORT: 8730

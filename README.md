@@ -32,17 +32,18 @@ For further options and mount points checkout [the docker example](#docker-examp
 
 ## Docker Example
 
-Ready to use docker image includes models `eng` and `deu`:
+The ready to use docker image includes models `eng` and `deu`:
 
 ```yaml
 # docker-compose.yml
 services:
     abc-soup:
-        image: ghcr.io/elbakerino/abc-soup:0.0.2
+        image: ghcr.io/elbakerino/abc-soup:0.0.3
         environment:
             PORT: 80
             APP_ENV: local
             #GUN_W: 2 # control gunicorn workers
+            #DEFAULT_LANG: deu+eng # control the default `lang` for tesseract
         volumes:
             - ./shared-data:/app/shared-assets
         ports:
@@ -87,16 +88,19 @@ xhr.addEventListener('readystatechange', () => {
 
 ## Dev Notes
 
-Clone repo and install deps:
+Install deps for IDE support (or set up a remote interpreter):
 
 ```shell
 pip install -r requirements.txt
 ```
 
-Then startup with docker compose or go into the container:
+Start the dev-server with docker compose:
 
 ```shell
-docker compose run --rm api bash
+docker compose up
+
+# or go into the container:
+# docker compose run --rm api bash
 ```
 
 Notice that the image requires rebuilding when changing e.g. deps:

@@ -3,6 +3,20 @@ from typing import List
 
 from werkzeug.datastructures import FileStorage
 
+convert = {
+    'level': int,
+    'page_num': int,
+    'block_num': int,
+    'par_num': int,
+    'line_num': int,
+    'word_num': int,
+    'left': int,
+    'top': int,
+    'width': int,
+    'height': int,
+    'conf': float,
+}
+
 
 def process_data(
     files: List[FileStorage],
@@ -10,20 +24,6 @@ def process_data(
     intra_block_breaks=True,  # adds line breaks when text is below each other
     keep_details=False,
 ):
-    convert = {
-        'level': int,
-        'page_num': int,
-        'block_num': int,
-        'par_num': int,
-        'line_num': int,
-        'word_num': int,
-        'left': int,
-        'top': int,
-        'width': int,
-        'height': int,
-        'conf': float,
-    }
-
     # todo: reduce loops
     columns = []
     pages = []
@@ -56,7 +56,7 @@ def process_data(
             # low confidence score
             continue
         if not page_data or page_data['page'] != row_data['page_num']:
-            # separating data for different files in batch mode
+            # separating data for different files (e.g. batch mode)
             page_data = {
                 'page': row_data['page_num'],
                 'file': files[len(pages)].filename,
@@ -80,15 +80,15 @@ def process_data(
         content = []
         blocks = []
         for block in blocks_copy:
-            last_box_y = None
+            last_box_y2 = None
             for box in block['boxes']:
-                if intra_block_breaks and last_box_y and last_box_y < box['top']:
-                    # previous box seems to be above current one
+                if intra_block_breaks and last_box_y2 and last_box_y2 < box['top']:
+                    # previous box is above current one
                     block['text'] += '\n'
                 else:
                     block['text'] += ' '
                 block['text'] += box['text']
-                last_box_y = box['top'] + box['height']
+                last_box_y2 = box['top'] + box['height']
 
             block['text'] = block['text'].strip()
             if block['text'] == '':

@@ -73,6 +73,9 @@ def build_config(options: Dict):
 
 def parse_options(form):
     options = json.loads(form['options']) if 'options' in form else default_options
+    if 'lang' in options and isinstance(options['lang'], list):
+        options['lang'] = '+'.join(options['lang'])
+
     return {
         **default_options,
         **options,
@@ -80,7 +83,7 @@ def parse_options(form):
 
 
 default_options = {
-    'lang': 'eng+deu',
+    'lang': os.environ.get('DEFAULT_LANG', 'eng+deu'),
     'optimize_images': True,
     'save_intermediate': False,
     'intra_block_breaks': True,
