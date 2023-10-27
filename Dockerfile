@@ -3,19 +3,9 @@ FROM python:3.10-slim-bookworm AS builder
 ENV PYTHONUNBUFFERED 1
 ARG DEBIAN_FRONTEND=noninteractive
 
-# todo: refine with best practices for python prod images
-RUN pip install --upgrade pip
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3-numpy python3-pandas \
-    libssl-dev curl && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update &&  \
     apt-get install -y --no-install-recommends \
+    libssl-dev curl \
     tesseract-ocr \
     ffmpeg libsm6 libxext6 \
     libgl1 \

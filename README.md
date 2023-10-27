@@ -38,7 +38,7 @@ The ready to use docker image includes models `eng` and `deu`:
 # docker-compose.yml
 services:
     abc-soup:
-        image: ghcr.io/elbakerino/abc-soup:0.0.3
+        image: ghcr.io/elbakerino/abc-soup:latest
         environment:
             PORT: 80
             APP_ENV: local
