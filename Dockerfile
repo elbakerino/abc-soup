@@ -12,7 +12,8 @@ RUN apt-get update &&  \
     libglib2.0-0 && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/share/tesseract-ocr/5/tessdata/eng.traineddata
 
 WORKDIR /app
 
