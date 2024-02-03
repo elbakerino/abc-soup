@@ -10,7 +10,6 @@ import numpy as np
 
 def optimize_image(file, optimize=False, output_base: Optional[str] = None):
     input_file_name = f'{file.filename}'
-    # load the example image and convert it to grayscale
     img_bytes = np.frombuffer(file.read(), dtype='uint8')
     image = cv2.imdecode(img_bytes, cv2.IMREAD_COLOR)
     initial_brightness = image.mean()
