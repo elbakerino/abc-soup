@@ -103,6 +103,9 @@ docker compose up
 # docker compose run --rm api bash
 ```
 
+- Service Home: [localhost:8730](http://localhost:8730)
+- OpenAPI Docs: [localhost:8730/docs](http://localhost:8730/docs) (WIP 🚧)
+
 Notice that the image requires rebuilding when changing e.g. deps:
 
 ```shell

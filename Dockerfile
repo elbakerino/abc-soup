@@ -1,5 +1,11 @@
 FROM python:3.10-slim-bookworm AS builder
 
+LABEL org.opencontainers.image.source = "https://github.com/elbakerino/abc-soup"
+LABEL org.opencontainers.image.authors = "Michael Becker, https://i-am-digital.eu"
+LABEL org.opencontainers.image.title = "ABC-Soup"
+LABEL org.opencontainers.image.version = "0.0.5"
+LABEL org.opencontainers.image.licenses = "MIT"
+
 ENV PYTHONUNBUFFERED 1
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -30,7 +36,7 @@ FROM builder AS dev
 
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 
-CMD python -m flask --app src/server --debug run --host 0.0.0.0 --port ${PORT}
+CMD exec python -m flask --app src/server --debug run --host 0.0.0.0 --port ${PORT}
 
 FROM builder
 
@@ -42,4 +48,4 @@ COPY ./src /app/src
 
 ENV GUN_W 2
 
-CMD cd src && python -m gunicorn -w ${GUN_W} server:app
+CMD cd src && exec python -m gunicorn -w ${GUN_W} server:app
