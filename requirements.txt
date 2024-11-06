@@ -1,5 +1,5 @@
 pillow==9.1.0
-smart-open>="6.4.0"
+smart-open>=6.4.0
 mypy
 numpy
 pytest
@@ -9,4 +9,4 @@ flask>=2.0.3
 werkzeug>=2.2.2
 flask-cors>=3.0.9
 pytesseract>=0.2.6
-APIFlask>=2.1.0
+APIFlask>=2.2.1

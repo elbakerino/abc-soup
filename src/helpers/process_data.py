@@ -94,6 +94,8 @@ def process_data(
             if block['text'] == '':
                 # ignoring "empty text" blocks (NOT boxes)
                 continue
+            # todo: calc a blocks position and size
+            # block['y2'] = last_box_y2
             content.append(block['text'])
             blocks.append(block)
 

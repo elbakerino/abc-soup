@@ -26,7 +26,7 @@ logging.getLogger('PIL').setLevel(logging.INFO)
 app = APIFlask(
     __name__,
     title='ABC-Soup',
-    version='0.0.5',
+    version='0.0.6',
 )
 CORS(app)
 
@@ -154,8 +154,11 @@ class OCROptions(Schema):
     preserve_interword_spaces = fields.Integer()
 
 
+file_types = validators.FileType(['.png', '.jpg', '.jpeg', '.webp'])
+
+
 class OCRInput(Schema):
-    file = fields.File(required=True, validate=[validators.FileType(['.png', '.jpg', '.jpeg'])])
+    file = fields.File(required=True, validate=[file_types])
     # todo: refactor to other field based strings for API-interface and internally mapping to clean flags
     options = fields.String(example=json.dumps(default_options))
     # options = OCROptions()
@@ -172,11 +175,18 @@ class Files(fields.Dict):
 
 
 class OCRInputBatch(Schema):
-    # todo: APIFlask doesn't support patternProperties and seems to filter out them,
+    class Meta:
+        title = "OCR Input Batch"
+
+    # meta class only works for "meta", not any json-schema
+    #     description = "A schema for OCR input batches"
+    #     additionalProperties = True
+
+    # todo: APIFlask doesn't support patternProperties and seems to filter them out,
     #       as long as it can't validate dynamic length files, it can't be used for batch-input
     # files = fields.Dict(
     #     fields.String(),
-    #     fields.File(required=True, validate=[validators.FileType(['.png', '.jpg', '.jpeg'])]),
+    #     fields.File(required=True, validate=[file_types)]),
     #     minProperties=1,
     #
     # todo: refactor to other field based strings for API-interface and internally mapping to clean flags
@@ -185,7 +195,7 @@ class OCRInputBatch(Schema):
 
 
 class OCRInputForPDF(Schema):
-    file = fields.File(required=True, validate=[validators.FileType(['.png', '.jpg', '.jpeg'])])
+    file = fields.File(required=True, validate=[file_types])
     # todo: refactor to other field based strings for API-interface and internally mapping to clean flags
     options = fields.String(example=json.dumps(default_options_pdf))
     # options = OCROptions()
@@ -266,7 +276,6 @@ def route_ocr(form_and_files_data):
 
     return {
         '_usages': [],
-        # 'outcome': None if not pages else pages[0]['blocks'] if options['keep_details'] else pages[0]['content'],
         'outcome': None if not pages else pages[0],
     }
 

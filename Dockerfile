@@ -3,7 +3,7 @@ FROM python:3.10-slim-bookworm AS builder
 LABEL org.opencontainers.image.source = "https://github.com/elbakerino/abc-soup"
 LABEL org.opencontainers.image.authors = "Michael Becker, https://i-am-digital.eu"
 LABEL org.opencontainers.image.title = "ABC-Soup"
-LABEL org.opencontainers.image.version = "0.0.5"
+LABEL org.opencontainers.image.version = "0.0.6"
 LABEL org.opencontainers.image.licenses = "MIT"
 
 ENV PYTHONUNBUFFERED 1
