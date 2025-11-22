@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm AS builder
+FROM python:3.14.0-slim-bookworm AS builder
 
 LABEL org.opencontainers.image.source = "https://github.com/elbakerino/abc-soup"
 LABEL org.opencontainers.image.authors = "Michael Becker, https://i-am-digital.eu"
