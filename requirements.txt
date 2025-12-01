@@ -6,7 +6,7 @@ pytest
 requests
 opencv-python
 flask>=2.0.3
-werkzeug>=2.2.2
+werkzeug>=3.1.4
 flask-cors>=3.0.9
 pytesseract>=0.2.6
 APIFlask>=2.2.1
