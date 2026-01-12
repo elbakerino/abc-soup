@@ -6,7 +6,9 @@ pytest
 requests
 opencv-python
 flask>=2.0.3
-werkzeug>=2.2.2
+werkzeug>=3.1.5
 flask-cors>=3.0.9
 pytesseract>=0.2.6
 APIFlask>=2.2.1
+marshmallow>=3.26.2 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
